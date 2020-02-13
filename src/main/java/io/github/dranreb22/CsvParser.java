@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CsvParser {
+  DatabaseManager db = new DatabaseManager();
 
   private List fileRows = new ArrayList();
   /* List to hold all fields from the file
@@ -19,21 +20,21 @@ public class CsvParser {
   But it pretty common to have to handle multiple types
       So you either use a Class or Blank Object type (like we are here)
    */
-
+  /** CsvParser - Reads csv Files using OpenCSV
+   * On load, check if file exists and load
+   * @param infile the file to be opened with path information
+   */
   public CsvParser(String infile) throws IOException, CsvValidationException {
-    /** CsvParser - Reads csv Files using OpenCSV
-     * On load, check if file exists and load
-     * @param infile the file to be opened with path information
-     */
+
     if (checkFile(infile)) {
       readCsv(infile);
     }
   }
-
+  /** readCsv: Read CSV file and load into our fileRows list
+   * @param csvinfile CSV file with path information for loading
+   */
   protected void readCsv(String csvinfile) throws IOException, CsvValidationException {
-    /** readCsv: Read CSV file and load into our fileRows list
-     * @param csvinfile CSV file with path information for loading
-     */
+
 
     // Open a file & input stream for use with CSVReader (to create a reader object)
     FileInputStream csvStream = new FileInputStream(csvinfile);
@@ -57,9 +58,11 @@ public class CsvParser {
    protected void writeCsv(String csvoutfile) {
     // place holder for write method (we'll add later with tests)
   }
-
+  /** printCsv - Printout the Csv */
   protected void printCsv() {
-    /** printCsv - Printout the Csv */
+    ArrayList<String> arrayList = new ArrayList<>();
+
+    int currentLine = 0;
 
     for (Object row : fileRows) {
       /*
@@ -68,9 +71,18 @@ public class CsvParser {
        */
       for (String fields : (String[]) row) {
           System.out.print(fields + ", ");
+          arrayList.add(fields);
       }
       System.out.println("\b\b\n---------------------");
+      if (currentLine > 0){
+        db.addBook(arrayList.get(0), arrayList.get(1), arrayList.get(2), arrayList.get(3));
+
+      }
+      arrayList.clear();
+      currentLine++;
+
     }
+
   }
 
   private boolean checkFile(String csvfile) {
